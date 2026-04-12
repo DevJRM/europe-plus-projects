@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=1280, initial-scale=1.0" name="viewport"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+    <title>RS-165 Pupin&#x27;s Palace New Belgrade (Pupinova Palata) – Project Overview</title>
+    
+    <!-- Password Protection System -->
+    <style>
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #800020 0%, #4a0e12 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #auth-modal {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 90%;
+        }
+
+        #auth-modal h2 {
+            color: #800020;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        #auth-modal p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+
+        #auth-modal input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        #auth-modal input:focus {
+            outline: none;
+            border-color: #800020;
+        }
+
+        #auth-modal button {
+            width: 100%;
+            padding: 16px;
+            background-color: #800020;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #auth-modal button:hover {
+            background-color: #5a0015;
+        }
+
+        #auth-modal button:active {
+            transform: scale(0.98);
+        }
+
+        #auth-error {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .authenticated {
+            display: none;
+        }
+    </style>
+
+    <div id="auth-overlay">
+        <div id="auth-modal">
+            <h2>🔒 Europe + Project Database</h2>
+            <p>Please enter your password</p>
+            <input
+                type="password"
+                id="password-input"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                autofocus
+            />
+            <button onclick="checkPassword()">Access</button>
+            <div id="auth-error">❌ Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded password hash (SHA-256)
+        const CORRECT_HASH = 'fc0726f07ebc9c7f51985822a357ba9f022ad1abad204f492573349a4ac31056';
+
+        // Check if already authenticated in this session
+        if (sessionStorage.getItem('dashboard_authenticated') === 'true') {
+            document.getElementById('auth-overlay').style.display = 'none';
+        }
+
+        // SHA-256 hashing function (using SubtleCrypto API)
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Password verification
+        async function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('auth-error');
+            const password = input.value;
+
+            if (!password) {
+                error.textContent = '⚠️ Please enter a password.';
+                error.style.display = 'block';
+                return;
+            }
+
+            // Hash the entered password
+            const enteredHash = await sha256(password);
+
+            // Compare with correct hash
+            if (enteredHash === CORRECT_HASH) {
+                // Success: Store authentication and hide overlay
+                sessionStorage.setItem('dashboard_authenticated', 'true');
+                document.getElementById('auth-overlay').style.display = 'none';
+                error.style.display = 'none';
+                input.value = '';
+            } else {
+                // Failure: Show error
+                error.textContent = '❌ Incorrect password. Please try again.';
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .burgundy-bg { background-color: #800020; }
+        .burgundy-text { color: #800020; }
+        .card { background-color: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; }
+        .metric-card { border-left-width: 4px; }
+        .section-title { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6; }
+        .section-title i { color: #800020; font-size: 1.125rem; }
+        .section-title h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
+        .section-title-compact { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; padding-bottom: 0.25rem; border-bottom: 1px solid #f3f4f6; }
+        .section-title-compact i { color: #800020; font-size: 1.125rem; }
+        .section-title-compact h3 { font-size: 1rem; font-weight: 700; color: #1f2937; margin: 0; }
+
+        .back-button {
+            position: fixed;
+            bottom: 12px;
+            right: 32px;
+            background-color: rgba(128, 0, 32, 0.1);
+            color: #800020;
+            border: 2px solid rgba(128, 0, 32, 0.1);
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+
+        .back-button:hover {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: #600018;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        .nav-buttons-container {
+            position: fixed;
+            bottom: 12px;
+            right: 32px;
+            display: flex;
+            gap: 0;
+            z-index: 50;
+        }
+
+        .nav-button {
+            background-color: rgba(128, 0, 32, 0.1);
+            color: #800020;
+            border: 2px solid rgba(128, 0, 32, 0.1);
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: #600018;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .nav-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-button.prev {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            border-right: 1px solid rgba(128, 0, 32, 0.2);
+            margin-right: 3px;
+        }
+
+        .nav-button.next {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-left: 1px solid rgba(128, 0, 32, 0.2);
+            margin-left: 3px;
+        }
+
+        .nav-button.back {
+            border-radius: 4px;
+            border-left: 1px solid rgba(128, 0, 32, 0.2);
+            border-right: 1px solid rgba(128, 0, 32, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 3px;
+            margin-right: 3px;
+        }
+
+        .nav-button.disabled-dark {
+            background-color: rgba(128, 0, 32, 0.25);
+            color: #600018;
+            box-shadow: 0 3px 10px rgba(128, 0, 32, 0.3);
+        }
+    </style>
+    <script>
+        // Handle filtered project navigation
+        function initializeNavigation() {
+            // Get filtered projects from sessionStorage (set by index page)
+            const filteredList = sessionStorage.getItem('filteredProjects');
+            if (!filteredList) return; // No filtering active
+
+            const projects = JSON.parse(filteredList);
+            const currentPageFile = window.location.pathname.split('/').pop();
+            const currentIndex = projects.findIndex(p => p.endsWith(currentPageFile));
+
+            if (currentIndex === -1) return; // Current page not in filtered list
+
+            // Update prev button
+            const prevBtn = document.querySelector('.nav-button.prev');
+            if (prevBtn) {
+                const atStart = currentIndex === 0;
+                if (atStart) {
+                    prevBtn.disabled = true;
+                    prevBtn.classList.add('disabled-dark');
+                    prevBtn.onclick = null;
+                } else {
+                    prevBtn.disabled = false;
+                    prevBtn.classList.remove('disabled-dark');
+                    prevBtn.onclick = () => window.location.href = projects[currentIndex - 1];
+                }
+            }
+
+            // Update next button
+            const nextBtn = document.querySelector('.nav-button.next');
+            if (nextBtn) {
+                const atEnd = currentIndex === projects.length - 1;
+                if (atEnd) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('disabled-dark');
+                    nextBtn.onclick = null;
+                } else {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('disabled-dark');
+                    nextBtn.onclick = () => window.location.href = projects[currentIndex + 1];
+                }
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeNavigation);
+    </script>
+</head>
+<body>
+<div class="flex flex-col w-[1280px] min-h-screen bg-white">
+    <!-- SECTION 1: HEADER & KEY METRICS -->
+    <div class="bg-gray-50">
+        <!-- Header -->
+        <div class="w-full burgundy-bg px-8 py-5 flex justify-between items-start">
+            <div class="text-white flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="flag_assets/RS.svg" alt="RS" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;">
+                    <p class="text-3xl font-bold leading-tight">|</p>
+                    <p class="text-3xl font-bold leading-tight">RS-165</p>
+                    <p class="text-3xl font-bold leading-tight">|</p>
+                    <h1 class="text-3xl font-bold leading-tight">Pupin&#x27;s Palace New Belgrade (Pupinova Palata) </h1>
+                </div>
+                <div class="flex items-center gap-2 text-sm opacity-90">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Tošin Bunar 270, Block 65, New Belgrade, Serbia"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex items-center gap-2 hover:opacity-100 transition-opacity"
+                       title="View on Google Maps">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Tošin Bunar 270, Block 65, New Belgrade, Serbia</p>
+                    </a>
+                    <p class="opacity-75">|</p>
+                    <p>2026-04-11</p>
+                    
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-2xl"><img src="flag_assets/DE.svg" alt="DE" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;"><img src="flag_assets/FI.svg" alt="FI" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;"><img src="flag_assets/FR.svg" alt="FR" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;"></div>
+                <p class="text-xs opacity-80 mt-3">Page 1079 of 1344</p>
+            </div>
+        </div>
+
+        <!-- Key Metrics Bar -->
+        <div class="px-8 py-4">
+            <div class="grid grid-cols-6 gap-4">
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #e8889f;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #e8889f;">CAPEX</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">€120m</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #d85a78;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #d85a78;">Opportunity</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Medium</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #c4284a;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #c4284a;">Status</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Under Construction</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #800020;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #800020;">Financing</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Partially Secured</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #5a0015;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #5a0015;">Sector</p>
+                    <p class="text-lg font-bold text-gray-900 mt-1">Real Estate &amp; Hospitality</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #4a0e12;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #4a0e12;">Type</p>
+                    <p class="text-lg font-bold text-gray-900 mt-1">Corporate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary & Project Details -->
+        <div class="px-8 pb-4">
+            <div class="card p-5 shadow-sm">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
+                    <i class="fas fa-align-left burgundy-text text-lg"></i>
+                    <h2 class="text-lg font-bold text-gray-800">Project Summary</h2>
+                </div>
+                <p class="text-sm text-gray-700 leading-relaxed text-justify mb-4">A premium mixed-use development in New Belgrade&#x27;s Block 65 (Tošin Bunar 270), following the success of the first Pupin&#x27;s Palace in Novi Sad. The project features 120 luxury residential units with smart-home integration and a Class A office tower, integrated with a retail podium and multi-level underground parking.</p>
+
+                <!-- Sponsor & Guarantor Row -->
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
+                    <div>
+                        <div style="color: #800020; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Sponsor</div>
+                        <p class="text-base font-bold text-gray-900">Galens Invest</p>
+                        <div class="text-xs text-gray-600 mt-1"><ul class="text-xs text-gray-600 space-y-0.5 list-disc list-inside"><li>Galens Group (RS)</li></ul></div>
+                    </div>
+                    <div style="word-break: break-word; overflow-wrap: break-word;">
+                        <div style="color: #800020; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Guarantor</div>
+                        <p class="text-sm font-bold text-gray-900" style="word-break: break-word; overflow-wrap: break-word;">corporate</p>
+                        <p class="text-xs text-gray-600 mt-1" style="word-break: break-word; overflow-wrap: break-word;">Financing is on-balance sheet for the sponsor, Galens Invest, with recourse to corporate assets. No third-party or state guarantee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: MARKET & RISK ANALYSIS -->
+    <div class="px-8 pt-4 pb-4 flex gap-6 flex-1">
+        <!-- Left Column: Suppliers -->
+        <div class="flex-1 flex flex-col" id="left-column-container">
+            <!-- Contracted Suppliers -->
+            <div class="card p-5 shadow-sm" style="margin-bottom: 1rem;">
+                <div class="section-title">
+                    <i class="fas fa-building"></i>
+                    <h3>Contracted Suppliers</h3>
+                </div>
+                <div class="text-sm text-gray-800">
+                    <p class="text-gray-600">No suppliers identified</p>
+                </div>
+            </div>
+
+            <!-- Potential Supply Opportunities -->
+            <div class="card p-5 shadow-sm flex flex-col flex-1">
+                <div class="section-title">
+                    <i class="fas fa-star"></i>
+                    <h3>Potential Supply Opportunities</h3>
+                </div>
+                <div class="text-sm text-gray-800 flex-1">
+                    <div class="pb-3 mb-4 border-b border-gray-200"><strong>KONE</strong> <span class="text-gray-500">(FI)</span><br/><span class="text-xs text-gray-600">Finnish multinational with significant market share in Serbian premium high-rises; whitelisted country.</span></div><div class="pb-3 mb-4 border-b border-gray-200"><strong>Siemens</strong> <span class="text-gray-500">(DE)</span><br/><span class="text-xs text-gray-600">German leader in smart building automation frequently used in Belgrade Class A offices; whitelisted country.</span></div><div class="pb-3 -mb-3 "><strong>Schneider Electric</strong> <span class="text-gray-500">(FR)</span><br/><span class="text-xs text-gray-600">Strong regional presence and provider for smart-city residential hubs in Serbia; whitelisted country.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Financial & Strategic -->
+        <div class="w-5/12 flex flex-col" id="right-column-container">
+            <!-- Project Scope Card (if exists) -->
+            <div class="card p-5 shadow-sm" style="margin-bottom: 1rem;">
+                <div class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Project Scope</h3>
+                </div>
+                <div class="text-sm text-gray-800"><div class="pb-3 mb-2 border-b border-gray-200" style="line-height: 1.2; "><span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: #4a0e12; margin-right: 8px; vertical-align: text-top;"></span><strong style="display: inline-block; vertical-align: text-top;">Residential Units</strong> <span class="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700 font-medium whitespace-nowrap shadow-sm" style="display: inline-block; margin-left: 4px; vertical-align: text-top;">€60.0m (50.0%)</span><br/><span class="text-xs text-gray-600 leading-relaxed" style="display: inline-block; margin-top: 2px;">Premium apartments with smart-home systems.</span></div><div class="pb-3 mb-2 border-b border-gray-200" style="line-height: 1.2; "><span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: #800020; margin-right: 8px; vertical-align: text-top;"></span><strong style="display: inline-block; vertical-align: text-top;">Office Tower</strong> <span class="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700 font-medium whitespace-nowrap shadow-sm" style="display: inline-block; margin-left: 4px; vertical-align: text-top;">€42.0m (35.0%)</span><br/><span class="text-xs text-gray-600 leading-relaxed" style="display: inline-block; margin-top: 2px;">Class A office space for commercial leasing.</span></div><div class="pb-3 mb-0 " style="line-height: 1.2; padding-bottom: 0;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: #c4284a; margin-right: 8px; vertical-align: text-top;"></span><strong style="display: inline-block; vertical-align: text-top;">Retail &amp; Parking</strong> <span class="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700 font-medium whitespace-nowrap shadow-sm" style="display: inline-block; margin-left: 4px; vertical-align: text-top;">€18.0m (15.0%)</span><br/><span class="text-xs text-gray-600 leading-relaxed" style="display: inline-block; margin-top: 2px;">Podium retail space and underground garage.</span></div></div>
+            </div>
+
+            <!-- Financial Structure -->
+            <div class="card p-5 shadow-sm flex flex-col flex-1">
+                <div class="section-title">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Financial Structure</h3>
+                </div>
+                <div class="space-y-3 text-sm flex-1">
+                    <div>
+                        <span style="color: #800020; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 0.25rem;">Financing Status</span>
+                        <p class="text-gray-900 font-medium">partially secured</p>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">Construction is funded through a combination of sponsor equity, high pre-sales volume (reported near 70%), and debt facilities from local commercial banks. A refinancing gap and operational facility opportunity exists for the commercial office component.</p>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-100" style="word-break: break-word; overflow-wrap: break-word;">
+                        <span style="color: #800020; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 0.25rem;">ECA/MLA Involvement</span>
+                        <p class="text-gray-900 font-medium" style="word-break: break-word; overflow-wrap: break-word;">none</p>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed" style="word-break: break-word; overflow-wrap: break-word;">Purely private commercial real estate development without DFI or ECA participation reported.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SECTION 3: FULL-WIDTH CARDS (Status, Research, Issues, Updates) -->
+    <div class="bg-gray-50">
+    <div class="px-8 pt-4 pb-3">
+        <!-- Project Status -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #e8889f; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-info-circle" style="color: #e8889f;"></i>
+                <h3 style="color: #e8889f;">Project Status</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">Construction is in advanced stages as of March 2026; structural works are largely complete with interior fit-out and facade works ongoing toward a 2027 handover.</p>
+        </div>
+
+        <!-- Research Notes -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #d85a78; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-book" style="color: #d85a78;"></i>
+                <h3 style="color: #d85a78;">Research Notes</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">Project successfully distinguished from the completed Novi Sad &#x27;Pupinova Palata&#x27;. Confirmed as Block 65 expansion. Note: Specific &#x27;AIK Banka&#x27; loan claims were removed as sources were broken and identity could not be verified.</p>
+        </div>
+
+        <!-- Issues & Risks -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #c4284a; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-exclamation-triangle" style="color: #c4284a;"></i>
+                <h3 style="color: #c4284a;">Issues & Risks</h3>
+            </div>
+            <p class="text-sm text-gray-800 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">High competition in the New Belgrade Block 65 hub (e.g., West 65, Wellport) remains a factor for premium absorption rates.</p>
+        </div>
+
+        <!-- Latest Update -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #800020; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-sync-alt" style="color: #800020;"></i>
+                <h3 style="color: #800020;">Updates</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;"><span style="font-weight: 600;">2026-03:</span> March 2026 progress report confirms construction is on schedule with structural works nearing completion.</p>
+        </div>
+
+        <!-- Sources -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #5a0015; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-link" style="color: #5a0015;"></i>
+                <h3 style="color: #5a0015;">Sources</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;"><a href="https://pupinovapalata-nbg.com/en" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">project summary</a> | <a href="https://galens.rs/en" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">sponsor</a> | <a href="https://galens.rs/pupins-palace-napredak-radova-mart-2026" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">project status</a> | <a href="https://galens.rs/en/about-us" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">guarantor</a> | <a href="https://pupinovapalata-nbg.com/en/investitor" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">financing status</a> | <a href="https://pupinovapalata-nbg.com/en/location" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">issues</a> | <a href="https://galens.rs/pupins-palace-napredak-radova-mart-2026" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">latest info</a></p>
+        </div>
+    </div>
+    </div>
+
+</div>
+<div class="nav-buttons-container"><button onclick="window.location.href='2026-04-10-CEE-Master_v9_page_1078.html'" class="nav-button prev" title="Previous project">&lt;</button><button onclick="window.location.href='2026-04-10-CEE-Master_v9_index.html'" class="nav-button back">BACK</button><button onclick="window.location.href='2026-04-10-CEE-Master_v9_page_1080.html'" class="nav-button next" title="Next project">&gt;</button></div>
+</body>
+</html>
