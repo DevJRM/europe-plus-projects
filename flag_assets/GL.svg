@@ -1,0 +1,20 @@
+<svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <clipPath id="top-half">
+    <rect width="640" height="240"/>
+  </clipPath>
+  <clipPath id="bottom-half">
+    <rect y="240" width="640" height="240"/>
+  </clipPath>
+</defs>
+
+<!-- White background (top half) -->
+<rect width="640" height="240" fill="#ffffff"/>
+<!-- Red background (bottom half) -->
+<rect y="240" width="640" height="240" fill="#C8102E"/>
+
+<!-- Red circle (visible in top half on white) -->
+<circle cx="320" cy="240" r="140" fill="#C8102E" clip-path="url(#top-half)"/>
+<!-- White circle (visible in bottom half on red) -->
+<circle cx="320" cy="240" r="140" fill="#ffffff" clip-path="url(#bottom-half)"/>
+</svg>

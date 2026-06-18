@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=1280, initial-scale=1.0" name="viewport"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+    <title>PL-262 [LIMITED_INFO] PGZ Stocznia Wojenna Electronics Modernization (Miecznik R&amp;D) – Project Overview</title>
+    
+    <!-- Password Protection System -->
+    <style>
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #800020 0%, #4a0e12 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #auth-modal {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 90%;
+        }
+
+        #auth-modal h2 {
+            color: #800020;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        #auth-modal p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+
+        #auth-modal input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        #auth-modal input:focus {
+            outline: none;
+            border-color: #800020;
+        }
+
+        #auth-modal button {
+            width: 100%;
+            padding: 16px;
+            background-color: #800020;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #auth-modal button:hover {
+            background-color: #5a0015;
+        }
+
+        #auth-modal button:active {
+            transform: scale(0.98);
+        }
+
+        #auth-error {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .authenticated {
+            display: none;
+        }
+    </style>
+
+    <div id="auth-overlay">
+        <div id="auth-modal">
+            <h2>🔒 Europe + Project Database</h2>
+            <p>Please enter your password</p>
+            <input
+                type="password"
+                id="password-input"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                autofocus
+            />
+            <button onclick="checkPassword()">Access</button>
+            <div id="auth-error">❌ Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded password hash (SHA-256)
+        const CORRECT_HASH = 'fc0726f07ebc9c7f51985822a357ba9f022ad1abad204f492573349a4ac31056';
+
+        // Check if already authenticated in this session
+        if (sessionStorage.getItem('dashboard_authenticated') === 'true') {
+            document.getElementById('auth-overlay').style.display = 'none';
+        }
+
+        // SHA-256 hashing function (using SubtleCrypto API)
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Password verification
+        async function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('auth-error');
+            const password = input.value;
+
+            if (!password) {
+                error.textContent = '⚠️ Please enter a password.';
+                error.style.display = 'block';
+                return;
+            }
+
+            // Hash the entered password
+            const enteredHash = await sha256(password);
+
+            // Compare with correct hash
+            if (enteredHash === CORRECT_HASH) {
+                // Success: Store authentication and hide overlay
+                sessionStorage.setItem('dashboard_authenticated', 'true');
+                document.getElementById('auth-overlay').style.display = 'none';
+                error.style.display = 'none';
+                input.value = '';
+            } else {
+                // Failure: Show error
+                error.textContent = '❌ Incorrect password. Please try again.';
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .burgundy-bg { background-color: #800020; }
+        .burgundy-text { color: #800020; }
+        .card { background-color: white; border: 1px solid rgba(229, 231, 235, 0.5); border-radius: 0.5rem; }
+        .metric-card { border-left-width: 4px; }
+        .section-title { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f3f4f6; }
+        .section-title i { color: #c4284a; font-size: 1.125rem; }
+        .section-title h3 { font-size: 1rem; font-weight: 700; color: #c4284a; margin: 0; }
+        .section-title-compact { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; padding-bottom: 0.25rem; border-bottom: 1px solid #f3f4f6; }
+        .section-title-compact i { color: #c4284a; font-size: 1.125rem; }
+        .section-title-compact h3 { font-size: 1rem; font-weight: 700; color: #c4284a; margin: 0; }
+
+        .back-button {
+            position: fixed;
+            bottom: 12px;
+            right: 32px;
+            background-color: rgba(128, 0, 32, 0.1);
+            color: #800020;
+            border: 2px solid rgba(128, 0, 32, 0.1);
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+
+        .back-button:hover {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: #600018;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .back-button:active {
+            transform: scale(0.98);
+        }
+
+        .nav-buttons-container {
+            position: fixed;
+            bottom: 12px;
+            right: 32px;
+            display: flex;
+            gap: 0;
+            z-index: 50;
+        }
+
+        .nav-button {
+            background-color: rgba(128, 0, 32, 0.1);
+            color: #800020;
+            border: 2px solid rgba(128, 0, 32, 0.1);
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: #600018;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .nav-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-button.prev {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            border-right: 1px solid rgba(128, 0, 32, 0.2);
+            margin-right: 3px;
+        }
+
+        .nav-button.next {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-left: 1px solid rgba(128, 0, 32, 0.2);
+            margin-left: 3px;
+        }
+
+        .nav-button.back {
+            border-radius: 4px;
+            border-left: 1px solid rgba(128, 0, 32, 0.2);
+            border-right: 1px solid rgba(128, 0, 32, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 3px;
+            margin-right: 3px;
+        }
+
+        .nav-button.disabled-dark {
+            background-color: rgba(128, 0, 32, 0.25);
+            color: #600018;
+            box-shadow: 0 3px 10px rgba(128, 0, 32, 0.3);
+        }
+
+        .download-buttons-container {
+            position: fixed;
+            bottom: 12px;
+            left: 32px;
+            display: flex;
+            gap: 8px;
+            z-index: 50;
+        }
+
+        .download-button {
+            background-color: rgba(128, 0, 32, 0.1);
+            color: #800020;
+            border: 2px solid rgba(128, 0, 32, 0.1);
+            border-radius: 4px;
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            width: 40px;
+        }
+
+        .download-button:hover {
+            background-color: rgba(128, 0, 32, 0.2);
+            color: #600018;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .download-button:active {
+            transform: scale(0.98);
+        }
+
+        .download-button i {
+            font-size: 1.25rem;
+        }
+
+        @media print {
+            .nav-buttons-container,
+            .download-buttons-container {
+                display: none !important;
+            }
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #password-overlay {
+                display: none !important;
+            }
+        }
+
+    </style>
+    <script>
+        // Handle filtered project navigation
+        function initializeNavigation() {
+            // Get filtered projects from sessionStorage (set by index page)
+            const filteredList = sessionStorage.getItem('filteredProjects');
+            if (!filteredList) return; // No filtering active
+
+            const projects = JSON.parse(filteredList);
+            const currentPageFile = window.location.pathname.split('/').pop();
+            const currentIndex = projects.findIndex(p => p.endsWith(currentPageFile));
+
+            if (currentIndex === -1) return; // Current page not in filtered list
+
+            // Update prev button
+            const prevBtn = document.querySelector('.nav-button.prev');
+            if (prevBtn) {
+                const atStart = currentIndex === 0;
+                if (atStart) {
+                    prevBtn.disabled = true;
+                    prevBtn.classList.add('disabled-dark');
+                    prevBtn.onclick = null;
+                } else {
+                    prevBtn.disabled = false;
+                    prevBtn.classList.remove('disabled-dark');
+                    prevBtn.onclick = () => window.location.href = projects[currentIndex - 1];
+                }
+            }
+
+            // Update next button
+            const nextBtn = document.querySelector('.nav-button.next');
+            if (nextBtn) {
+                const atEnd = currentIndex === projects.length - 1;
+                if (atEnd) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('disabled-dark');
+                    nextBtn.onclick = null;
+                } else {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('disabled-dark');
+                    nextBtn.onclick = () => window.location.href = projects[currentIndex + 1];
+                }
+            }
+        }
+
+        // Navigate to index page (works both locally and on GitHub Pages)
+        function goToIndexPage() {
+            const currentPath = window.location.pathname;
+            const currentFile = currentPath.split('/').pop();
+            // Extract base name from page file (e.g., "2026-05-21-EAF-Projects_v1_page_844.html" -> "2026-05-21-EAF-Projects_v1")
+            const baseName = currentFile.replace(/_page_\d+\.html$/, '');
+            const indexFile = baseName + '_index.html';
+
+            // For local file:// protocol, always use the base_name index
+            if (window.location.protocol === 'file:') {
+                window.location.href = indexFile;
+            } else {
+                // For http/https (GitHub Pages), try base_name first, fall back to root index.html
+                fetch(indexFile, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = indexFile;
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    })
+                    .catch(() => {
+                        window.location.href = 'index.html';
+                    });
+            }
+        }
+
+        // Generate ChatGPT prompt template
+        function generateChatGPTPrompt() {
+            return `# ChatGPT Validation and Enrichment Instructions
+
+You are a research assistant analyzing capital expenditure (capex) projects. Your task is to validate, extend, and enrich the project data below using authoritative sources.
+
+## Context
+This data represents a project tracked for a bank to understand if it is an appropiate target to lend to. The data follows a structured schema (v1.0.0 or v1.1.0) used for systematic research.
+
+## Your Tasks
+
+### 1. VALIDATE Against Authoritative Sources
+- Verify all factual claims (capex amounts, dates, sponsor names, locations, status)
+- Check if project status has changed since project status, latest info or projet entry date.
+- Confirm supplier/contractor assignments against official announcements
+- Flag any contradictions, erroneous or outdated information
+- Cite specific sources with URLs for all validations
+
+### 2. EXTEND Missing or Incomplete Fields
+- Fill in empty fields where authoritative data exists
+- Add missing shareholders with ownership percentages (if available)
+- Complete project_scope breakdowns with estimated percentages
+- Add missing suppliers or potential suppliers based on market intelligence
+- Provide financing details (secured amounts, financing gaps, expected financial close dates)
+- Add v1.1.0 optional fields where data is available (lenders, milestones, regulatory permits, procurement context, sponsor capex plans)
+
+### 3. UPDATE Outdated Information
+- Check for recent developments, status changes, or announcements
+- Update financing_status if new funding has been secured
+- Update project_status if construction has started or completed
+- Add latest_info entries for significant recent events
+- Update capex_eur_m if revised budgets have been announced
+
+### 4. ENRICH With Additional Context
+- Add evidence_quality metadata where missing (for v1.1.0 projects)
+- Specify contract types, values, and signing dates for suppliers (v1.1.0)
+- Add milestones with dates and completion status (v1.1.0)
+- Identify regulatory permits and approval status (v1.1.0)
+- Provide sponsor capex plan context for Corporate/SOE projects (v1.1.0)
+
+### 5. FLAG Suspicious, Erroneous or Conflicting Data
+- Highlight any inconsistencies in the data
+- Note if sources are weak or speculative
+- Identify educated guesses vs. confirmed facts (especially for potential_suppliers)
+- Flag if capex amount seems inconsistent with project scope
+
+## Output Format
+
+First, perform data enrichment (internally - do not output to user):
+1. Validate all project data against authoritative sources
+2. Extend missing or incomplete fields
+3. Update outdated information
+4. Enrich with additional context
+5. Create complete enriched JSON (use this for financing analysis)
+
+Then, provide your analysis in two sections for the user:
+
+### VALIDATION FINDINGS
+- List each validation with [CONFIRMED], [OUTDATED], [INCORRECT], or [UNVERIFIABLE]
+- Cite specific sources (URLs) for each finding
+- Highlight critical changes or corrections
+
+### ENRICHED DATA (Internal Use Only - Do Not Display)
+- Silently create the complete enriched project JSON with all updates, extensions, and enrichments
+- Maintain exact schema compliance (preserve all required fields and structure)
+- Use this enriched data as the foundation for the FINANCING ANALYSIS below
+- Do not output this JSON to the user
+
+### CREDIT RISK ANALYSIS
+
+Acting as a senior credit risk analyst, provide a deep creditworthiness assessment of the borrower, project, and guarantor. Do not assume or propose financing structures. Analyze based solely on the enriched project data, your knowledge, and internet research. Write in professional credit analyst style: narrative prose, concise, fact-based, suitable for credit committee review.
+
+**1. Borrower Creditworthiness**
+
+Analyze the sponsor's financial strength, operational performance, and credit standing. Consider: revenue stability, profitability, debt levels, liquidity, payment history, market position, management quality, and shareholder support. For SOE/government-backed borrowers, assess sovereign credit quality and institutional commitment.
+
+**2. Project Assessment**
+
+Evaluate the project's economic merit, market demand, operational risk, and strategic importance. Consider: sector fundamentals, competitive positioning, execution risk (stage, contractor quality, schedule realism), technology maturity, regulatory environment, and revenue sustainability.
+
+**3. Guarantor Assessment**
+
+If applicable, assess the guarantor's creditworthiness independently. Analyze financial capacity, willingness to support, legal enforceability of guarantee, and any subordination or conditionality.
+
+**4. Credit Strengths & Weaknesses**
+
+Identify key credit strengths (market position, cash flow generation, strategic importance, strong sponsor backing) and material weaknesses (leverage, competition, regulatory constraints, execution risk, cyclicality).
+
+**5. Credit Rating & Risk Grade**
+
+Assign a credit rating (AAA/AA/A/BBB/BB/B or equivalent) and risk grade (Low/Medium/High/Critical) with clear rationale. Base on the totality of borrower quality, project fundamentals, and risk profile.
+
+**6. Material Credit Risks**
+
+Identify 2-3 most material credit risks with brief explanation. State risks as they exist; do not propose mitigations.
+
+**7. Credit Opinion**
+
+Provide your professional recommendation: APPROVE / APPROVE WITH CAUTION / REJECT with concise justification.
+
+## Important Guidelines
+- Prioritize official sources: company websites, government announcements, regulatory filings, press releases
+- Use reputable media outlets for supplementary information
+- Be conservative with estimates - only add data you can justify
+- Distinguish between confirmed facts and educated guesses
+- Preserve all existing data unless you have strong evidence of error
+- Maintain proper JSON structure (arrays must be arrays, dates must be YYYY-MM-DD or YYYY-MM)
+
+---
+
+# PROJECT DATA FOR VALIDATION AND ENRICHMENT
+
+`;
+        }
+
+        // Convert project JSON to markdown format
+        function convertProjectToMarkdown(project) {
+            let md = '';
+
+            // Header
+            md += '## ' + (project.project_id || 'UNKNOWN') + ': ' + (project.project_name || 'N/A') + '\n\n';
+
+            if (project.eaf_fav) {
+                md += '⭐ **FAVORITE PROJECT**\n\n';
+            }
+
+            const entry = project.entries && project.entries[0] ? project.entries[0] : {};
+
+            // Basic Information
+            md += '### Basic Information\n\n';
+            md += '- **Entry Date**: ' + (entry.entry_date || 'N/A') + '\n';
+            md += '- **Sector**: ' + (entry.sector || 'N/A') + '\n';
+            md += '- **Project Type**: ' + (entry.project_type || 'N/A') + '\n';
+            const country_value = entry.country && typeof entry.country === 'object' ? entry.country.value : (entry.country || 'N/A');
+            const country_code = entry.country && typeof entry.country === 'object' ? entry.country.code : 'N/A';
+            md += '- **Country**: ' + country_value + ' (' + country_code + ')\n';
+            md += '- **Location**: ' + (entry.location || 'N/A') + '\n';
+            md += '- **Total Capex**: €' + (entry.capex_eur_m || 'N/A') + 'M\n\n';
+
+            // Coordinates
+            if (entry.coordinates && entry.coordinates.latitude && entry.coordinates.longitude) {
+                md += '- **Coordinates**: ' + entry.coordinates.latitude + ', ' + entry.coordinates.longitude + '\n\n';
+            }
+
+            // Project Summary
+            if (entry.project_summary) {
+                md += '### Project Summary\n\n';
+                const summary_value = typeof entry.project_summary === 'object' ? (entry.project_summary.value || 'N/A') : entry.project_summary;
+                md += summary_value + '\n\n';
+                if (typeof entry.project_summary === 'object' && entry.project_summary.source) {
+                    md += '**Source**: ' + entry.project_summary.source + '\n';
+                    if (entry.project_summary.source_excerpt) {
+                        md += '**Excerpt**: "' + entry.project_summary.source_excerpt + '"\n';
+                    }
+                    md += '\n';
+                }
+            }
+
+            // Sponsor
+            if (entry.sponsor) {
+                md += '### Sponsor\n\n';
+                const sponsor_value = typeof entry.sponsor === 'object' ? (entry.sponsor.value || 'N/A') : entry.sponsor;
+                md += '- **Name**: ' + sponsor_value + '\n';
+
+                if (typeof entry.sponsor === 'object') {
+                    if (entry.sponsor.country) md += '- **Country**: ' + entry.sponsor.country + '\n';
+
+                    if (entry.sponsor.is_publicly_listed !== undefined) {
+                        md += '- **Publicly Listed**: ' + (entry.sponsor.is_publicly_listed ? 'Yes' : 'No') + '\n';
+                    }
+
+                    if (entry.sponsor.shareholders && entry.sponsor.shareholders.length > 0) {
+                        md += '\n**Shareholders**:\n';
+                        entry.sponsor.shareholders.forEach(sh => {
+                            md += '- ' + (sh.name || 'N/A') + ' (' + (sh.country || 'N/A') + ')';
+                            if (sh.ownership_percent) md += ' - ' + sh.ownership_percent + '%';
+                            if (sh.shareholder_type) md += ' [' + sh.shareholder_type + ']';
+                            md += '\n';
+                        });
+                    }
+
+                    if (entry.sponsor.source) {
+                        md += '\n**Source**: ' + entry.sponsor.source + '\n';
+                        if (entry.sponsor.source_excerpt) {
+                            md += '**Excerpt**: "' + entry.sponsor.source_excerpt + '"\n';
+                        }
+                    }
+                }
+                md += '\n';
+            }
+
+            // Status
+            md += '### Project Status\n\n';
+            if (entry.project_status) {
+                const status_value = typeof entry.project_status === 'object' ? (entry.project_status.value || 'N/A') : entry.project_status;
+                md += '- **Status**: ' + status_value + '\n';
+                if (typeof entry.project_status === 'object') {
+                    if (entry.project_status.comments) md += '- **Comments**: ' + entry.project_status.comments + '\n';
+                    if (entry.project_status.sources) md += '- **Source**: ' + entry.project_status.sources + '\n';
+                }
+            }
+            md += '\n';
+
+            // Guarantor
+            if (entry.guarantor) {
+                md += '### Guarantor\n\n';
+                const guarantor_value = typeof entry.guarantor === 'object' ? (entry.guarantor.value || 'N/A') : entry.guarantor;
+                md += '- **Type**: ' + guarantor_value + '\n';
+                if (typeof entry.guarantor === 'object') {
+                    if (entry.guarantor.comments) md += '- **Comments**: ' + entry.guarantor.comments + '\n';
+                    if (entry.guarantor.source) md += '- **Source**: ' + entry.guarantor.source + '\n';
+                }
+                md += '\n';
+            }
+
+            // Financing Status
+            if (entry.financing_status) {
+                md += '### Financing Status\n\n';
+                if (typeof entry.financing_status === 'object') {
+                    if (entry.financing_status.value) md += '- **Status**: ' + entry.financing_status.value + '\n';
+                    if (entry.financing_status.secured_amount_eur_m) md += '- **Secured Amount**: €' + entry.financing_status.secured_amount_eur_m + 'M\n';
+                    if (entry.financing_status.financing_gap_eur_m) md += '- **Financing Gap**: €' + entry.financing_status.financing_gap_eur_m + 'M\n';
+                    if (entry.financing_status.expected_financial_close) md += '- **Expected Financial Close**: ' + entry.financing_status.expected_financial_close + '\n';
+                    if (entry.financing_status.comments) md += '- **Comments**: ' + entry.financing_status.comments + '\n';
+                } else {
+                    md += '- **Status**: ' + entry.financing_status + '\n';
+                }
+                md += '\n';
+            }
+
+            // Opportunity
+            if (entry.opportunity) {
+                md += '### Opportunity Assessment\n\n';
+                const opp_value = typeof entry.opportunity === 'object' ? (entry.opportunity.value || 'N/A') : entry.opportunity;
+                md += '- **Level**: ' + opp_value + '\n';
+                if (typeof entry.opportunity === 'object' && entry.opportunity.comments) {
+                    md += '- **Rationale**: ' + entry.opportunity.comments + '\n';
+                }
+                md += '\n';
+            }
+
+            // Project Scope
+            if (entry.project_scope && entry.project_scope.length > 0) {
+                md += '### Project Scope Breakdown\n\n';
+                entry.project_scope.forEach(scope => {
+                    md += '- **' + (scope.scope_item || 'N/A') + '** (' + (scope.estimated_capex_percent || '0') + '%)\n';
+                    if (scope.description) md += '  - ' + scope.description + '\n';
+                });
+                md += '\n';
+            }
+
+            // Suppliers
+            if (entry.suppliers && entry.suppliers.length > 0) {
+                md += '### Confirmed Suppliers\n\n';
+                entry.suppliers.forEach(sup => {
+                    md += '- **' + (sup.company || 'N/A') + '** (' + (sup.country || 'N/A') + ')\n';
+                    md += '  - Scope: ' + (sup.scope || 'N/A') + '\n';
+                    md += '  - Status: ' + (sup.status || 'N/A') + '\n';
+                    if (sup.contract_value_eur_m) md += '  - Contract Value: €' + sup.contract_value_eur_m + 'M\n';
+                    if (sup.contract_type) md += '  - Contract Type: ' + sup.contract_type + '\n';
+                    if (sup.contract_status) md += '  - Contract Status: ' + sup.contract_status + '\n';
+                    if (sup.signing_date) md += '  - Signing Date: ' + sup.signing_date + '\n';
+                    if (sup.comments) md += '  - Comments: ' + sup.comments + '\n';
+                    if (sup.source) md += '  - Source: ' + sup.source + '\n';
+                });
+                md += '\n';
+            }
+
+            // Potential Suppliers
+            if (entry.potential_suppliers && entry.potential_suppliers.length > 0) {
+                md += '### Potential Suppliers\n\n';
+                entry.potential_suppliers.forEach(ps => {
+                    md += '- **' + (ps.company || 'N/A') + '** (' + (ps.country || 'N/A') + ')\n';
+                    if (ps.scope) md += '  - Scope: ' + ps.scope + '\n';
+                    if (ps.likely_role) md += '  - Likely Role: ' + ps.likely_role + '\n';
+                    if (ps.reasoning) md += '  - Reasoning: ' + ps.reasoning + '\n';
+                    if (ps.evidence_basis) md += '  - Evidence Basis: ' + ps.evidence_basis + '\n';
+                    if (ps.selection_stage) md += '  - Selection Stage: ' + ps.selection_stage + '\n';
+                    if (ps.competitive_position) md += '  - Competitive Position: ' + ps.competitive_position + '\n';
+                    if (ps.estimated_bid_value_eur_m) md += '  - Estimated Bid Value: €' + ps.estimated_bid_value_eur_m + 'M\n';
+                });
+                md += '\n';
+            }
+
+            // MLA/ECA
+            if (entry['MLA/ECA']) {
+                md += '### MLA/ECA Eligibility\n\n';
+                const mla_value = typeof entry['MLA/ECA'] === 'object' ? (entry['MLA/ECA'].value || 'N/A') : entry['MLA/ECA'];
+                md += '- **Status**: ' + mla_value + '\n';
+                if (typeof entry['MLA/ECA'] === 'object') {
+                    if (entry['MLA/ECA'].comments) md += '- **Comments**: ' + entry['MLA/ECA'].comments + '\n';
+                    if (entry['MLA/ECA'].source) md += '- **Source**: ' + entry['MLA/ECA'].source + '\n';
+                }
+                md += '\n';
+            }
+
+            // Issues
+            if (entry.issues) {
+                md += '### Issues & Risks\n\n';
+                if (Array.isArray(entry.issues)) {
+                    entry.issues.forEach(issue => {
+                        const issue_value = typeof issue === 'object' ? (issue.value || 'N/A') : issue;
+                        md += '- **' + issue_value + '**\n';
+                    });
+                } else if (typeof entry.issues === 'object') {
+                    md += '- ' + (entry.issues.value || 'N/A') + '\n';
+                } else {
+                    md += '- ' + entry.issues + '\n';
+                }
+                md += '\n';
+            }
+
+            // Latest Info
+            if (entry.latest_info) {
+                md += '### Latest Update\n\n';
+                if (entry.latest_info.date) {
+                    md += '**' + entry.latest_info.date + '**: ';
+                }
+                const latest_value = typeof entry.latest_info === 'object' ? (entry.latest_info.value || 'N/A') : entry.latest_info;
+                md += latest_value + '\n\n';
+            }
+
+            // Research Notes
+            if (entry.research_notes) {
+                md += '### Research Notes\n\n';
+                md += entry.research_notes + '\n\n';
+            }
+
+            return md;
+        }
+
+        // Download project data as markdown with ChatGPT prompt
+        function downloadProjectAsMarkdown() {
+            try {
+                const project = window.projectData;
+                if (!project) {
+                    alert('Project data not available');
+                    return;
+                }
+
+                // Build complete markdown content with prompt + project data
+                let content = '';
+
+                // Add ChatGPT prompt
+                content += generateChatGPTPrompt();
+                content += '\n\n---\n\n';
+
+                // Try markdown conversion, fallback to JSON if error
+                try {
+                    content += convertProjectToMarkdown(project);
+                } catch (mdError) {
+                    // Fallback: just use JSON format
+                    console.warn('Markdown conversion failed, using JSON:', mdError);
+                    content += '\n## Project Data (JSON Format)\n\n```json\n';
+                    content += JSON.stringify(project, null, 2);
+                    content += '\n```\n';
+                }
+
+                // Create and trigger download
+                const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+
+                // Create filename
+                const nameClean = project.project_name.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+                link.download = project.project_id + '_' + nameClean + '.md';
+
+                // Append, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Cleanup URL after a brief delay
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 1000);
+            } catch (error) {
+                alert('Download failed: ' + (error.message || error));
+                console.error('Download error:', error);
+            }
+        }
+
+        // Download project as raw JSON
+        function downloadProjectAsJSON() {
+            try {
+                const project = window.projectData;
+                if (!project) {
+                    alert('Project data not available');
+                    return;
+                }
+
+                // Create JSON blob
+                const jsonContent = JSON.stringify(project, null, 2);
+                const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+
+                // Create filename
+                const nameClean = project.project_name.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+                link.download = project.project_id + '_' + nameClean + '.json';
+
+                // Append, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Cleanup URL after a brief delay
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 1000);
+            } catch (error) {
+                alert('Download failed: ' + (error.message || error));
+                console.error('Download error:', error);
+            }
+        }
+
+        // Embed project data for download functionality
+        window.projectData = {"project_id": "PL-262", "project_name": "[LIMITED_INFO] PGZ Stocznia Wojenna Electronics Modernization (Miecznik R&D)", "entries": [{"entry_date": "2026-04-10", "project_summary": {"value": "Industrial base modernization at PGZ Stocznia Wojenna involving the construction of specialized hull integration halls and a Hardware-in-the-Loop (HWIL) Laboratory. The facilities are designed to support the Miecznik frigate program's combat system integration and sensor testing suites.", "source": "https://pgzsw.com.pl/en/news/innovation-and-technology-development-forum-at-pgz-stocznia-wojenna"}, "sector": "Defense-related infrastructure", "project_type": "SOE", "sponsor": {"value": "PGZ Stocznia Wojenna", "country": "PL", "source": "https://pgzsw.com.pl/en/about-the-shipyard", "shareholders": [{"name": "Polska Grupa Zbrojeniowa S.A.", "country": "PL"}]}, "country": {"value": "Poland", "code": "PL"}, "location": "Gdynia, Pomeranian Voivodeship", "capex_eur_m": 70, "project_scope": [{"scope_item": "Hull Integration and Assembly Halls", "estimated_capex_percent": 65, "description": "Construction of specialized high-bay halls for the final assembly of frigate hulls and integration of large-scale naval systems."}, {"scope_item": "HWIL Laboratory and R&D Center", "estimated_capex_percent": 35, "description": "Electronic systems testing facility for simulation and validation of combat management systems (CMS)."}], "project_status": {"value": "under construction", "comments": "Infrastructure work is active; PGZ reached a construction milestone for the main assembly hall in February 2026. This Capex tranche is part of a broader shipyard upgrade accelerated for the Miecznik program.", "sources": "https://portalstoczniowy.pl/stocznia-wojenna-podwyzki-modernizacja-nowe-kontrakty/"}, "guarantor": {"value": "none", "comments": "No state or corporate guarantee provided for the construction debt; lending is on a recourse basis to the PGZ Stocznia Wojenna balance sheet with implicit support as an SOE.", "source": "https://www.gov.pl/web/ministerstwo-skarbu-panstwa"}, "financing_status": {"value": "partially secured", "comments": "Civil works are partially funded through state subsidies and internal PGZ capital (PLN 300M total plan). Commercial financing gap exists for advanced specialized testing equipment and software integration suites targetting 2026-2027.", "sources": "https://hansa.news/polish-naval-shipyard-undergoes-major-upgrade"}, "suppliers": [{"company": "NDI", "country": "PL", "scope": "Civil and Infrastructure Construction (Halls and Logistics)", "status": "delivering", "source": "https://www.ndi.pl/en/projects/budowa-hali-magazynowej-i-przebudowa-infrastruktury-technicznej-na-terenie-pgz-stoczni-wojennej"}], "potential_suppliers": [{"company": "Thales", "country": "FR", "scope": "Combat Management Systems Integration", "likely_role": "Technology Partner", "reasoning": "Thales is the confirmed CMS supplier for the Miecznik frigates (TACTICOS system); reported to assist in local lab calibration."}, {"company": "Babcock International", "country": "UK", "scope": "Design and Engineering Services", "likely_role": "Strategic Partner", "reasoning": "Primary partner in the Miecznik alliance; provides facility design optimization for naval R&D."}, {"company": "Rohde & Schwarz", "country": "DE", "scope": "Communications and Simulation Equipment", "likely_role": "Equipment Supplier", "reasoning": "Already contracted for ship-borne ESM/Comms; likely to supply correlated testing hardware for the HWIL lab."}], "MLA/ECA": {"value": "none", "comments": "No project-specific institutional financing confirmed. While eligible for EIB defense scope (SESI), no specific approval has been announced for this modernization tranche.", "source": ""}, "opportunity": {"value": "medium", "comments": "GEOGRAPHIC ASSESSMENT: Sponsor (PL) local; potential technology suppliers (FR, UK, DE) in whitelist provide client angle but are not main borrowers (CAP: MEDIUM). CREDIT QUALITY: SOE sponsor provides implicit state linkage (UPGRADE 1 notch from base). SIZE: Capex EUR 70M (DOWNGRADE 1 notch for size < EUR 80M). CIVIL WORKS: Default base LOW for SOE shipyard CAPEX; no explicit ECA guarantee found to warrant upgrade. FINAL ASSESSMENT: Opportunity is limited by the likely use of domestic corporate credit lines and small scale; limited to specialized supplier finance tranches.\n[Classification: The project is real and linked to the high-profile Miecznik frigate program. However, specific infrastructure-only CAPEX (EUR 70M) for the HWIL lab and hull halls is often bundled with the broader defense contract, leading to limited standalone reporting.]"}, "issues": {"value": "Technological sovereignty requirements (Offset/ToT) complicating foreign contractor involvement; critical scarcity of specialized electronics integration labor in the Baltic region.", "source": "https://defence24.pl/sily-zbrojne/mieczniki-dostana-inne-pociski-tylko-kto-za-to-zaplaci-komentarz"}, "research_notes": "Project flagged [SUSPICIOUS] as it appears to be a corporate Capex tranche for shipyard modernization rather than a standalone project finance entity. No external confirmation of an independent 'Campus' legal structure found.", "latest_info": {"date": "2026-03", "value": "PGZ announced acceleration of the hall construction to meet the 2029 first frigate delivery deadline.", "source": "https://portalstoczniowy.pl/en/pgz-stocznia-wojenna-budowa-fregat-miecznik-przemysl-okretowy"}}], "_council_review": {"reviewed": true, "review_date": "2026-04-10T03:02:29.591647Z"}, "research_notes": "\n[LIMITED_INFO] The project is real and linked to the high-profile Miecznik frigate program. However, specific infrastructure-only CAPEX (EUR 70M) for the HWIL lab and hull halls is often bundled with the broader defense contract, leading to limited standalone reporting."};
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeNavigation);
+    </script>
+</head>
+<body>
+<div class="flex flex-col w-[1280px] min-h-screen bg-white">
+    <!-- SECTION 1: HEADER & KEY METRICS -->
+    <div class="bg-gray-50">
+        <!-- Header -->
+        <div class="w-full burgundy-bg px-8 py-5 flex justify-between items-start">
+            <div class="text-white flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="flag_assets/PL.svg" alt="PL" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;">
+                    <p class="text-3xl font-bold leading-tight">|</p>
+                    <p class="text-3xl font-bold leading-tight">PL-262</p>
+                    <p class="text-3xl font-bold leading-tight">|</p>
+                    <h1 class="text-3xl font-bold leading-tight">[LIMITED_INFO] PGZ Stocznia Wojenna Electronics Modernization (Miecznik R&amp;D) </h1>
+                </div>
+                <div class="flex items-center gap-2 text-sm opacity-90">
+                    <a href="https://www.google.com/maps/?q=Gdynia, Pomeranian Voivodeship, Poland"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex items-center gap-2 hover:opacity-100 transition-opacity"
+                       title="View on Google Maps">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Gdynia, Pomeranian Voivodeship, Poland</p>
+                    </a>
+                    <p class="opacity-75">|</p>
+                    <p>2026-04-10</p>
+                    
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-2xl"><img src="flag_assets/DE.svg" alt="DE" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;"><img src="flag_assets/FR.svg" alt="FR" style="width: 40px; height: 30px; margin-right: 8px; display: inline-block; vertical-align: middle; border-radius: 2px;"></div>
+                <p class="text-xs opacity-80 mt-3">Page 2163 of 2879</p>
+            </div>
+        </div>
+
+        <!-- Key Metrics Bar -->
+        <div class="px-8 py-4">
+            <div class="grid grid-cols-6 gap-4">
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #e8889f;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #e8889f;">CAPEX</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">€70m</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #d85a78;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #d85a78;">Opportunity</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Medium</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #c4284a;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #c4284a;">Status</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Under Construction</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #800020;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #800020;">Financing</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Partially Secured</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #5a0015;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #5a0015;">Sector</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">Defense-related infrastructure</p>
+                </div>
+                <div class="card p-4 flex flex-col justify-center metric-card shadow-sm bg-white" style="border-left-color: #4a0e12;">
+                    <p class="text-xs font-semibold uppercase tracking-wide" style="color: #4a0e12;">Type</p>
+                    <p class="text-xl font-bold text-gray-900 mt-1">SOE</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary & Project Details -->
+        <div class="px-8 pb-4">
+            <div class="card p-5 shadow-sm" style="border-left: 4px solid #d85a78;">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
+                    <i class="fas fa-align-left text-lg" style="color: #c4284a;"></i>
+                    <h2 class="text-lg font-bold" style="color: #c4284a;">Project Summary</h2>
+                </div>
+                <p class="text-sm text-gray-700 leading-relaxed text-justify mb-4">Industrial base modernization at PGZ Stocznia Wojenna involving the construction of specialized hull integration halls and a Hardware-in-the-Loop (HWIL) Laboratory. The facilities are designed to support the Miecznik frigate program&#x27;s combat system integration and sensor testing suites.</p>
+
+                <!-- Sponsor & Guarantor Row -->
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
+                    <div>
+                        <div style="color: #800020; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Sponsor</div>
+                        <p class="text-base font-bold text-gray-900">PGZ Stocznia Wojenna</p>
+                        <div class="text-xs text-gray-600 mt-1"><ul class="text-xs text-gray-600 space-y-0.5 list-inside"><li>Polska Grupa Zbrojeniowa S.A. (PL)</li></ul></div>
+                    </div>
+                    <div style="word-break: break-word; overflow-wrap: break-word;">
+                        <div style="color: #800020; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Guarantor</div>
+                        <p class="text-sm font-bold text-gray-900" style="word-break: break-word; overflow-wrap: break-word;">none</p>
+                        <p class="text-xs text-gray-600 mt-1" style="word-break: break-word; overflow-wrap: break-word;">No state or corporate guarantee provided for the construction debt; lending is on a recourse basis to the PGZ Stocznia Wojenna balance sheet with implicit support as an SOE.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: MARKET & RISK ANALYSIS -->
+    <div class="px-8 pt-4 pb-4 flex gap-6 flex-1">
+        <!-- Left Column: Suppliers -->
+        <div class="flex-1 flex flex-col" id="left-column-container">
+            <!-- Contracted Suppliers -->
+            <div class="card p-5 shadow-sm" style="border-left: 4px solid #d85a78; margin-bottom: 1rem;">
+                <div class="section-title">
+                    <i class="fas fa-building"></i>
+                    <h3>Contracted Suppliers</h3>
+                </div>
+                <div class="text-sm text-gray-800">
+                    <div class="pb-3 -mb-3 "><strong>NDI</strong> <span class="text-gray-500">(PL)</span><br/><span class="text-xs text-gray-600">Civil and Infrastructure Construction (Halls and Logistics)</span></div>
+                </div>
+            </div>
+
+            <!-- Potential Supply Opportunities -->
+            <div class="card p-5 shadow-sm flex flex-col flex-1" style="border-left: 4px solid #d85a78;">
+                <div class="section-title">
+                    <i class="fas fa-star"></i>
+                    <h3>Potential Suppliers</h3>
+                </div>
+                <div class="text-sm text-gray-800 flex-1">
+                    <div class="pb-3 mb-4 border-b border-gray-200"><strong>Thales</strong> <span class="text-gray-500">(FR)</span><br/><span class="text-xs text-gray-600">Thales is the confirmed CMS supplier for the Miecznik frigates (TACTICOS system); reported to assist in local lab calibration.</span></div><div class="pb-3 mb-4 border-b border-gray-200"><strong>Babcock International</strong> <span class="text-gray-500">(UK)</span><br/><span class="text-xs text-gray-600">Primary partner in the Miecznik alliance; provides facility design optimization for naval R&amp;D.</span></div><div class="pb-3 -mb-3 "><strong>Rohde &amp; Schwarz</strong> <span class="text-gray-500">(DE)</span><br/><span class="text-xs text-gray-600">Already contracted for ship-borne ESM/Comms; likely to supply correlated testing hardware for the HWIL lab.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Financial & Strategic -->
+        <div class="w-5/12 flex flex-col" id="right-column-container">
+            <!-- Project Scope Card (if exists) -->
+            <div class="card p-5 shadow-sm" style="border-left: 4px solid #c4284a; margin-bottom: 1rem;">
+                <div class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Project Scope</h3>
+                </div>
+                <div class="text-sm text-gray-800"><div class="pb-3 mb-2 border-b border-gray-200" style="line-height: 1.2; "><span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: #4a0e12; margin-right: 8px; vertical-align: text-top;"></span><strong style="display: inline-block; vertical-align: text-top;">Hull Integration and Assembly Halls</strong> <span class="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700 font-medium whitespace-nowrap shadow-sm" style="display: inline-block; margin-left: 4px; vertical-align: text-top;">€45.5m (65.0%)</span><br/><span class="text-xs text-gray-600 leading-relaxed" style="display: inline-block; margin-top: 2px;">Construction of specialized high-bay halls for the final assembly of frigate hulls and integration of large-scale naval systems.</span></div><div class="pb-3 mb-0 " style="line-height: 1.2; padding-bottom: 0;"><span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background-color: #800020; margin-right: 8px; vertical-align: text-top;"></span><strong style="display: inline-block; vertical-align: text-top;">HWIL Laboratory and R&amp;D Center</strong> <span class="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700 font-medium whitespace-nowrap shadow-sm" style="display: inline-block; margin-left: 4px; vertical-align: text-top;">€24.5m (35.0%)</span><br/><span class="text-xs text-gray-600 leading-relaxed" style="display: inline-block; margin-top: 2px;">Electronic systems testing facility for simulation and validation of combat management systems (CMS).</span></div></div>
+            </div>
+
+            <!-- Financial Structure -->
+            <div class="card p-5 shadow-sm flex flex-col flex-1" style="border-left: 4px solid #800020;">
+                <div class="section-title">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Financial Structure</h3>
+                </div>
+                <div class="space-y-3 text-sm flex-1">
+                    <div>
+                        <span style="color: #800020; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 0.25rem;">Financing Status</span>
+                        <p class="text-gray-900 font-medium">partially secured</p>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed">Civil works are partially funded through state subsidies and internal PGZ capital (PLN 300M total plan). Commercial financing gap exists for advanced specialized testing equipment and software integration suites targetting 2026-2027.</p>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-100" style="word-break: break-word; overflow-wrap: break-word;">
+                        <span style="color: #800020; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 0.25rem;">ECA/MLA Involvement</span>
+                        <p class="text-gray-900 font-medium" style="word-break: break-word; overflow-wrap: break-word;">none</p>
+                        <p class="text-xs text-gray-600 mt-1 leading-relaxed" style="word-break: break-word; overflow-wrap: break-word;">No project-specific institutional financing confirmed. While eligible for EIB defense scope (SESI), no specific approval has been announced for this modernization tranche.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SECTION 3: FULL-WIDTH CARDS (Status, Research, Issues, Updates) -->
+    <div class="bg-gray-50">
+    <div class="px-8 pt-4 pb-3">
+        <!-- Project Status -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #e8889f; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-info-circle" style="color: #e8889f;"></i>
+                <h3 style="color: #e8889f;">Project Status</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">Infrastructure work is active; PGZ reached a construction milestone for the main assembly hall in February 2026. This Capex tranche is part of a broader shipyard upgrade accelerated for the Miecznik program.</p>
+        </div>
+
+        <!-- Research Notes -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #d85a78; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-book" style="color: #d85a78;"></i>
+                <h3 style="color: #d85a78;">Research Notes</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">Project flagged [SUSPICIOUS] as it appears to be a corporate Capex tranche for shipyard modernization rather than a standalone project finance entity. No external confirmation of an independent &#x27;Campus&#x27; legal structure found.</p>
+        </div>
+
+        <!-- Issues & Risks -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #c4284a; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-exclamation-triangle" style="color: #c4284a;"></i>
+                <h3 style="color: #c4284a;">Issues & Risks</h3>
+            </div>
+            <p class="text-sm text-gray-800 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;">Technological sovereignty requirements (Offset/ToT) complicating foreign contractor involvement; critical scarcity of specialized electronics integration labor in the Baltic region.</p>
+        </div>
+
+        <!-- Latest Update -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #800020; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-sync-alt" style="color: #800020;"></i>
+                <h3 style="color: #800020;">Updates</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;"><span style="font-weight: 600;">2026-03:</span> PGZ announced acceleration of the hall construction to meet the 2029 first frigate delivery deadline.</p>
+        </div>
+
+        <!-- Sources -->
+        <div class="card p-3 shadow-sm mb-4" style="border-left: 4px solid #5a0015; word-break: break-word; overflow-wrap: break-word;">
+            <div class="section-title-compact">
+                <i class="fas fa-link" style="color: #5a0015;"></i>
+                <h3 style="color: #5a0015;">Sources</h3>
+            </div>
+            <p class="text-sm text-gray-700 leading-relaxed mt-2" style="word-break: break-word; overflow-wrap: break-word;"><a href="https://pgzsw.com.pl/en/news/innovation-and-technology-development-forum-at-pgz-stocznia-wojenna" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">project summary</a> | <a href="https://pgzsw.com.pl/en/about-the-shipyard" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">sponsor</a> | <a href="https://portalstoczniowy.pl/stocznia-wojenna-podwyzki-modernizacja-nowe-kontrakty/" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">project status</a> | <a href="https://www.gov.pl/web/ministerstwo-skarbu-panstwa" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">guarantor</a> | <a href="https://hansa.news/polish-naval-shipyard-undergoes-major-upgrade" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">financing status</a> | <a href="https://www.ndi.pl/en/projects/budowa-hali-magazynowej-i-przebudowa-infrastruktury-technicznej-na-terenie-pgz-stoczni-wojennej" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">suppliers [1]</a> | <a href="https://defence24.pl/sily-zbrojne/mieczniki-dostana-inne-pociski-tylko-kto-za-to-zaplaci-komentarz" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">issues</a> | <a href="https://portalstoczniowy.pl/en/pgz-stocznia-wojenna-budowa-fregat-miecznik-przemysl-okretowy" target="_blank" rel="noopener noreferrer" class="text-gray-700 hover:underline" style="color: #374151; text-decoration: none;" onmouseover="this.style.textDecoration='underline';" onmouseout="this.style.textDecoration='none';">latest info</a></p>
+        </div>
+    </div>
+    </div>
+
+</div>
+<div class="nav-buttons-container"><button onclick="window.location.href='2026-06-18-EAF-Projects_v1_page_2162.html'" class="nav-button prev" title="Previous project">&lt;</button><button onclick="goToIndexPage()" class="nav-button back">BACK</button><button onclick="window.location.href='2026-06-18-EAF-Projects_v1_page_2164.html'" class="nav-button next" title="Next project">&gt;</button></div>
+<div class="download-buttons-container">
+    <button onclick="downloadProjectAsMarkdown()" class="download-button" title="Download as Markdown for ChatGPT validation">
+        <i class="fas fa-magnifying-glass"></i>
+    </button>
+    <button onclick="downloadProjectAsJSON()" class="download-button" title="Download as JSON">
+        <i class="fas fa-file-code"></i>
+    </button>
+</div>
+</body>
+</html>
