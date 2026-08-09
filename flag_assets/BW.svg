@@ -1,0 +1,12 @@
+<svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky blue top section (40%) -->
+  <rect width="640" height="192" fill="#00A1DE"/>
+  <!-- White frame top -->
+  <rect y="192" width="640" height="12" fill="#FFFFFF"/>
+  <!-- Black stripe (15%) -->
+  <rect y="204" width="640" height="72" fill="#000000"/>
+  <!-- White frame bottom -->
+  <rect y="276" width="640" height="12" fill="#FFFFFF"/>
+  <!-- Sky blue bottom section (40%) -->
+  <rect y="288" width="640" height="192" fill="#00A1DE"/>
+</svg>
