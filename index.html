@@ -7,7 +7,169 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
     <title>Market Opportunities - Project Index</title>
-    
+
+    <!-- Password Protection System -->
+    <style>
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #800020 0%, #4a0e12 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #auth-modal {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 90%;
+        }
+
+        #auth-modal h2 {
+            color: #800020;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        #auth-modal p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+
+        #auth-modal input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        #auth-modal input:focus {
+            outline: none;
+            border-color: #800020;
+        }
+
+        #auth-modal button {
+            width: 100%;
+            padding: 16px;
+            background-color: #800020;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        #auth-modal button:hover {
+            background-color: #5a0015;
+        }
+
+        #auth-modal button:active {
+            transform: scale(0.98);
+        }
+
+        #auth-error {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .authenticated {
+            display: none;
+        }
+    </style>
+
+    <div id="auth-overlay">
+        <div id="auth-modal">
+            <h2>🔒 Europe + Project Database</h2>
+            <p>Please enter your password</p>
+            <input
+                type="password"
+                id="password-input"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                autofocus
+            />
+            <button onclick="checkPassword()">Access</button>
+            <div id="auth-error">❌ Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded password hash (SHA-256)
+        const CORRECT_HASH = 'fc0726f07ebc9c7f51985822a357ba9f022ad1abad204f492573349a4ac31056';
+
+        // Check if already authenticated in this session
+        if (sessionStorage.getItem('dashboard_authenticated') === 'true') {
+            document.getElementById('auth-overlay').style.display = 'none';
+        }
+
+        // SHA-256 hashing function (using SubtleCrypto API)
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // Password verification
+        async function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('auth-error');
+            const password = input.value;
+
+            if (!password) {
+                error.textContent = '⚠️ Please enter a password.';
+                error.style.display = 'block';
+                return;
+            }
+
+            // Hash the entered password
+            const enteredHash = await sha256(password);
+
+            // Compare with correct hash
+            if (enteredHash === CORRECT_HASH) {
+                // Success: Store authentication and hide overlay
+                sessionStorage.setItem('dashboard_authenticated', 'true');
+                document.getElementById('auth-overlay').style.display = 'none';
+                error.style.display = 'none';
+                input.value = '';
+            } else {
+                // Failure: Show error
+                error.textContent = '❌ Incorrect password. Please try again.';
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .burgundy-bg { background-color: #800020; }
